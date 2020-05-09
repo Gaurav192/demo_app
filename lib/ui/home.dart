@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:assignment/ui/painter.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -8,7 +9,8 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   int index = 0;
   bool hideFab = false;
   File _image;
@@ -21,6 +23,32 @@ class _HomePageState extends State<HomePage> {
       });
   }
 
+  ScrollController _controller;
+  AnimationController _animationController;
+  Animation<double> _tween;
+  @override
+  void initState() {
+    _animationController =
+        AnimationController(vsync: this, duration: Duration(seconds: 2));
+    _tween = Tween<double>(begin: 0, end: 44).animate(_animationController);
+    _controller = ScrollController()
+      ..addListener(() {
+        if (_controller.offset <= _controller.position.minScrollExtent &&
+            !_controller.position.outOfRange) {
+          _animationController.reset();
+        } else if (_tween.value == 0) {
+          _animationController.forward();
+        }
+      });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -29,6 +57,7 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         extendBodyBehindAppBar: true,
         body: ListView(
+          controller: _controller,
           padding: EdgeInsets.all(16),
           children: <Widget>[
             Card(
@@ -186,16 +215,21 @@ class _HomePageState extends State<HomePage> {
             SizedBox(
               height: 20,
             ),
-            Text('test'),
+            Container(
+              height: 50,
+              child: AnimatedBuilder(
+                animation: _tween,
+                builder: (cxt, child) => CustomPaint(
+                  painter: ProgressPainter(_tween.value),
+                ),
+              ),
+            ),
             SizedBox(
               height: 20,
             ),
             Text(
               'Explore our Insurance Products',
               style: Theme.of(context).textTheme.headline6,
-            ),
-            SizedBox(
-              height: 20,
             ),
             ListView.builder(
                 padding: EdgeInsets.all(0),
