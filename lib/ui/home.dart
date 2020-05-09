@@ -113,27 +113,18 @@ class _HomePageState extends State<HomePage>
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Icon(Icons.location_on),
-                  Flexible(
-                    child: FutureBuilder<String>(
-                        future: fetchAddress,
-                        builder: (context, snapshot) {
-                          String _text;
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            _text = 'Fetching Address';
-                          } else {
-                            _text = snapshot.data ?? '';
-                          }
-                          return Expanded(child: Text(_text));
-                        }),
-                    // child: Text(
-                    //   'Vasai, Mumbai, Maharashtra',
-                    //   style: Theme.of(context)
-                    //       .textTheme
-                    //       .bodyText1
-                    //       .copyWith(color: Colors.black),
-                    // ),
-                  ),
+                  FutureBuilder<String>(
+                      future: fetchAddress,
+                      builder: (context, snapshot) {
+                        String _text;
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          _text = 'Fetching Address';
+                        } else {
+                          _text = snapshot.data ?? 'Unable to fetch location';
+                        }
+                        return Expanded(child: Text(_text));
+                      }),
                   IconButton(icon: Icon(Icons.edit), onPressed: () {}),
                   IconButton(
                       icon: Image.asset("assets/help.png"), onPressed: () {}),
