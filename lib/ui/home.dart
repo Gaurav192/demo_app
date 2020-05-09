@@ -27,12 +27,12 @@ class _HomePageState extends State<HomePage> {
                     children: <Widget>[
                       CircleAvatar(
                         backgroundColor: Colors.grey[300],
-                        radius: MediaQuery.of(context).size.width * 0.15,
+                        radius: 60,
                         child: Image.asset('assets/placeholder.png'),
                       ),
                       Positioned(
-                        right: 10,
-                        bottom: 10,
+                        right: 2,
+                        bottom: 16,
                         child: Image.asset(
                           "assets/camera.png",
                           height: 24,
