@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -8,6 +11,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int index = 0;
   bool hideFab = false;
+  File _image;
+
+  Future getImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    if (image != null)
+      setState(() {
+        _image = image;
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -50,23 +63,34 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Stack(
-                      children: <Widget>[
-                        CircleAvatar(
-                          backgroundColor: Colors.grey[300],
-                          radius: 60,
-                          child: Image.asset('assets/placeholder.png'),
-                        ),
-                        Positioned(
-                          right: 2,
-                          bottom: 16,
-                          child: Image.asset(
-                            "assets/camera.png",
-                            height: 24,
-                            width: 24,
+                    GestureDetector(
+                      onTap: () => getImage(),
+                      child: Stack(
+                        children: <Widget>[
+                          CircleAvatar(
+                            backgroundColor: Colors.grey[300],
+                            radius: 60,
+                            child: _image == null
+                                ? Image.asset('assets/placeholder.png')
+                                : Container(
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                            fit: BoxFit.fill,
+                                            image: FileImage(_image))),
+                                  ),
                           ),
-                        ),
-                      ],
+                          Positioned(
+                            right: 2,
+                            bottom: 16,
+                            child: Image.asset(
+                              "assets/camera.png",
+                              height: 24,
+                              width: 24,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     Column(
                       children: <Widget>[
