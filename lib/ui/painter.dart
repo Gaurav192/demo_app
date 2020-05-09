@@ -7,7 +7,7 @@ class ProgressPainter extends CustomPainter {
   ProgressPainter(this.value);
   @override
   void paint(Canvas canvas, Size size) {
-    print(value);
+    // print(value);
     var paint = Paint()
       ..color = Colors.black
       ..style = PaintingStyle.stroke
