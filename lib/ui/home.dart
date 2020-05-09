@@ -334,8 +334,7 @@ class _HomePageState extends State<HomePage>
         builder: (BuildContext context) {
           return Container(
             color: Colors.grey[200],
-            height: 200,
-            padding: EdgeInsets.only(top: 10),
+            height: 220,
             child: Row(children: [
               Expanded(
                 flex: 2,
@@ -345,6 +344,18 @@ class _HomePageState extends State<HomePage>
               ),
               Column(
                 children: <Widget>[
+                  Container(
+                      child: Center(
+                          child: Container(
+                              width: 50,
+                              margin: EdgeInsets.only(top: 10, bottom: 10),
+                              height: 5,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.rectangle,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8.0)),
+                              )))),
                   Row(
                     children: <Widget>[
                       Card(
