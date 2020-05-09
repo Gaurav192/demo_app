@@ -7,6 +7,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int index = 0;
+  bool hideFab = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -207,21 +208,174 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: Colors.white,
-        tooltip: 'Home',
-        child: Image.asset(
-          "assets/home.png",
-          height: 36,
+      floatingActionButton: Builder(
+        builder: (context) => Visibility(
+          visible: !hideFab,
+          child: FloatingActionButton(
+            onPressed: () {
+              _settingModalBottomSheet(context);
+              hideFloatingActionButton(true);
+            },
+            backgroundColor: Colors.white,
+            tooltip: 'Home',
+            child: Image.asset(
+              "assets/home.png",
+              height: 36,
+            ),
+            elevation: 2.0,
+          ),
         ),
-        elevation: 2.0,
       ),
     );
   }
 
   void _selectedTab(int value) {
-    index = value;
+    setState(() {
+      index = value;
+    });
+  }
+
+  void hideFloatingActionButton(bool value) {
+    setState(() {
+      hideFab = value;
+    });
+  }
+
+  void _settingModalBottomSheet(context) {
+    var bottomSheetController = showBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            color: Colors.grey[200],
+            height: 200,
+            padding: EdgeInsets.only(top: 10),
+            child: Row(children: [
+              Expanded(
+                flex: 2,
+                child: SizedBox(
+                  width: 10,
+                ),
+              ),
+              Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Card(
+                        borderOnForeground: true,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Container(
+                          width: 100,
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text('Option 1'),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Image.asset(
+                                "assets/option.png",
+                                height: 24,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Card(
+                        borderOnForeground: true,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Container(
+                          width: 100,
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text('Option 2'),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Image.asset(
+                                "assets/option.png",
+                                height: 24,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Card(
+                        borderOnForeground: true,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Container(
+                          width: 100,
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text('Option 3'),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Image.asset(
+                                "assets/option.png",
+                                height: 24,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Card(
+                        borderOnForeground: true,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Container(
+                          width: 100,
+                          padding: EdgeInsets.all(8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text('Option 4'),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Image.asset(
+                                "assets/option.png",
+                                height: 24,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              Expanded(flex: 2, child: SizedBox(width: 10))
+            ]),
+          );
+        });
+    bottomSheetController.closed.then((value) {
+      hideFloatingActionButton(false);
+    });
   }
 }
 
