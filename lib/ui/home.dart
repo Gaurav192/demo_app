@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:assignment/ui/painter.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoder/geocoder.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:location/location.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -14,6 +16,7 @@ class _HomePageState extends State<HomePage>
   int index = 0;
   bool hideFab = false;
   File _image;
+  Future fetchAddress;
 
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
@@ -23,11 +26,54 @@ class _HomePageState extends State<HomePage>
       });
   }
 
+  Future<LocationData> fetchLocation() async {
+    Location location = new Location();
+
+    bool _serviceEnabled;
+    PermissionStatus _permissionGranted;
+
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return null;
+      }
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return null;
+      }
+    }
+
+    return await location.getLocation();
+  }
+
+  Future<String> _getAddress() async {
+    try {
+      final _location = await fetchLocation().catchError((e) => null);
+      if (_location == null) {
+        return 'Unable to fetch Location';
+      }
+      final _coordinates = Coordinates(_location.latitude, _location.longitude);
+      final _address =
+          await Geocoder.local.findAddressesFromCoordinates(_coordinates);
+      final _first = _address.first;
+      return "${_first.subLocality ?? ""}, ${_first.subAdminArea ?? ""}, ${_first.adminArea ?? ""}";
+    } on Exception catch (e) {
+      // print(e);
+      return 'Unable to fetch Location';
+    }
+  }
+
   ScrollController _controller;
   AnimationController _animationController;
   Animation<double> _tween;
   @override
   void initState() {
+    fetchAddress = _getAddress();
     _animationController =
         AnimationController(vsync: this, duration: Duration(seconds: 2));
     _tween = Tween<double>(begin: 0, end: 44).animate(_animationController);
@@ -66,13 +112,25 @@ class _HomePageState extends State<HomePage>
                 children: <Widget>[
                   Icon(Icons.location_on),
                   Flexible(
-                    child: Text(
-                      'Vasai, Mumbai, Maharashtra',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1
-                          .copyWith(color: Colors.black),
-                    ),
+                    child: FutureBuilder<String>(
+                        future: fetchAddress,
+                        builder: (context, snapshot) {
+                          String _text;
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            _text = 'Fetching Address';
+                          } else {
+                            _text = snapshot.data ?? '';
+                          }
+                          return Expanded(child: Text(_text));
+                        }),
+                    // child: Text(
+                    //   'Vasai, Mumbai, Maharashtra',
+                    //   style: Theme.of(context)
+                    //       .textTheme
+                    //       .bodyText1
+                    //       .copyWith(color: Colors.black),
+                    // ),
                   ),
                   IconButton(icon: Icon(Icons.edit), onPressed: () {}),
                   IconButton(
